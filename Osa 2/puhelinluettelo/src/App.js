@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
 import Contacts from './components/Contacts'
+import PersonForm from './components/PersonForm'
+
 
 const App = () => {
     const [person, setPersons] = useState([
@@ -11,6 +13,7 @@ const App = () => {
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [newFilter, setNewFilter] = useState('')
+    
 
     const addPerson = (event) => {
         event.preventDefault()
@@ -28,12 +31,11 @@ const App = () => {
         }
         else{
             setPersons(person.concat(personObject))
+            
             setNewName('')
             setNewNumber('')
         }
-        
     }
-
 
     const handleNameChange = (event) => {
         console.log(event.target.value)
@@ -58,25 +60,17 @@ const App = () => {
                                         value={newFilter}
                                         onChange={handleFilterChange}
                                     />
+                
             </div>
+            
             <h2>Add new</h2>
-            <form onSubmit={addPerson}>
-                <div>
-                    name: <input 
-                            value={newName}
-                            onChange={handleNameChange}
-                            />
-                </div>
-                <div>
-                    number: <input
-                                value={newNumber}
-                                onChange={handleNumberChange}
-                            />
-                </div>
-                <div>
-                    <button type="submit">Add</button>
-                </div>
-            </form>
+            <PersonForm 
+                onSubmit={addPerson} 
+                valueName={newName} 
+                valueNumber={newNumber} 
+                onNameChange={handleNameChange} 
+                onNumberChange={handleNumberChange} 
+            />
             <h2>Numbers</h2>
             <div>
                 <Contacts list={person} filter={newFilter} />
