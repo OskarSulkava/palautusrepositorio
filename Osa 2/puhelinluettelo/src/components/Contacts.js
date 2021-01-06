@@ -1,7 +1,7 @@
 import React from 'react'
 import Person from './Person'
 
-const Contacts = ({list, filter}) => {
+const Contacts = ({list, filter, deletePerson}) => {
     
     let filtered = []
     
@@ -13,8 +13,14 @@ const Contacts = ({list, filter}) => {
     }
     
     return (
+
+        filtered.map(person => {
+            return(
+            <Person key={person.id} person={person} deletePerson={() => deletePerson(person.id, person.name)} />
+            )
+        })
         
-        <Person list={filtered} />
+        //<Person list={filtered} />
     )
 }
 

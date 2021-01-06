@@ -1,12 +1,12 @@
 import React from 'react'
 
 
-const Person = ({list}) => {
+const Person = ({person, deletePerson}) => {
 
     return (
-        list.map(p =>
-            <p key={p.name}>{p.name} {p.number} </p>
-        )
+        <p>
+            {person.name} {person.number} <button onClick={deletePerson}>Poista</button>
+        </p>
     )
 }
 

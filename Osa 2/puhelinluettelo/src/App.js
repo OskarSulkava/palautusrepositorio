@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import Contacts from './components/Contacts'
 import PersonForm from './components/PersonForm'
-import axios from 'axios'
+import personService from './services/persons'
 
 
 const App = () => {
@@ -10,16 +10,13 @@ const App = () => {
     const [newNumber, setNewNumber] = useState('')
     const [newFilter, setNewFilter] = useState('')
 
-    const hook = () => {
-        axios
-            .get('http://localhost:3001/persons')
-            .then(response => {
-                console.log('promise fulfilled')
-                setPersons(response.data)
+    useEffect(() => {
+        personService
+        .getAll()
+            .then(initialPerson =>{
+                setPersons(initialPerson)
             })
-    }
-    
-    useEffect(hook, [])
+    }, [])
     
 
     const addPerson = (event) => {
@@ -30,17 +27,43 @@ const App = () => {
             number: newNumber   
         }
         
-        console.log(newName)
         
+
         if(person.some(p => p.name === newName)){
-            alert(` ${newName} is already added to phonebook`)
+            
+            let p = person.find(val => val.name === newName)
+            
+            console.log(p) 
+            if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
+                personService
+                .update(p.id, personObject)
+                .then(returnedPerson => {
+                    console.log(returnedPerson)
+                    setPersons(person.map(pe => pe.id !== p.id ? pe : returnedPerson))
+                })
+            }
             
         }
         else{
-            setPersons(person.concat(personObject))
-            
+            personService
+            .create(personObject)
+                .then(returnedPerson => { //Posti palauttaa tiedon siitä, mitä ollaan lähetetty ja itse response.data sisältää lähetetyt tiedot, ne palautetaan returnedPersonina ja luodaan uusi lista johon tämä lisätään
+                    setPersons(person.concat(returnedPerson))
+                })
+
             setNewName('')
             setNewNumber('')
+        }
+    }
+
+    const deletePerson = (id, name) =>{
+        if(window.confirm(`Delete ${name}?`)){
+            personService
+            .remove(id)
+                .then(response => {
+                    console.log(response)
+                    setPersons(person.filter(p => p.id !== id)) //Lisätään uuteen listaan kaikki ne joiden id ei ole poistetun id
+                })
         }
     }
 
@@ -80,7 +103,7 @@ const App = () => {
             />
             <h2>Numbers</h2>
             <div>
-                <Contacts list={person} filter={newFilter} />
+                <Contacts list={person} filter={newFilter} deletePerson={deletePerson} />
             </div>
         </div>
     )
