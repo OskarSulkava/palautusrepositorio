@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react'
 import Contacts from './components/Contacts'
 import PersonForm from './components/PersonForm'
 import personService from './services/persons'
+import Notification from './components/Notification'
+import ErrorNotif from './components/ErrorNotif'
 
 
 const App = () => {
@@ -9,6 +11,8 @@ const App = () => {
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [newFilter, setNewFilter] = useState('')
+    const [successMessage, setSuccessMessage] = useState(null)
+    const [errorMessage, setErrorMessage] = useState(null)
 
     useEffect(() => {
         personService
@@ -38,8 +42,26 @@ const App = () => {
                 personService
                 .update(p.id, personObject)
                 .then(returnedPerson => {
-                    console.log(returnedPerson)
+                    
                     setPersons(person.map(pe => pe.id !== p.id ? pe : returnedPerson))
+
+                    setSuccessMessage(
+                        `Persons ${returnedPerson.name} number was succesfully changed`
+                    )
+                    setTimeout(() => {
+                        setSuccessMessage(null)
+                    }, 5000)
+                })
+                .catch(error => {
+
+                    setErrorMessage(
+                        `Information of ${p.name} has already been removed from server`
+                    )
+                    setTimeout(() => {
+                        setErrorMessage(null)
+                    }, 5000)
+
+                    setPersons(person.filter(person => person.id !== p.id))
                 })
             }
             
@@ -49,6 +71,13 @@ const App = () => {
             .create(personObject)
                 .then(returnedPerson => { //Posti palauttaa tiedon siitä, mitä ollaan lähetetty ja itse response.data sisältää lähetetyt tiedot, ne palautetaan returnedPersonina ja luodaan uusi lista johon tämä lisätään
                     setPersons(person.concat(returnedPerson))
+
+                    setSuccessMessage(
+                        `Person ${returnedPerson.name} was succesfully added`
+                    )
+                    setTimeout(() => {
+                        setSuccessMessage(null)
+                    }, 5000)
                 })
 
             setNewName('')
@@ -61,8 +90,25 @@ const App = () => {
             personService
             .remove(id)
                 .then(response => {
-                    console.log(response)
+                    
                     setPersons(person.filter(p => p.id !== id)) //Lisätään uuteen listaan kaikki ne joiden id ei ole poistetun id
+
+                    setSuccessMessage(
+                        `Person ${name} was succesfully deleted`
+                    )
+                    setTimeout(() => {
+                        setSuccessMessage(null)
+                    }, 5000)
+                })
+                .catch(error => {
+
+                    setErrorMessage(
+                        `Information of ${name} has already been removed from server`
+                    )
+                    setTimeout(() => {
+                        setErrorMessage(null)
+                    }, 5000)
+                    setPersons(person.filter(person => person.id !== id)) //Filtteröidään uuteen listaan kaikki muut paitsi jo poistettu id
                 })
         }
     }
@@ -85,6 +131,8 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notification message={successMessage} />
+            <ErrorNotif message={errorMessage} />
             <div>
                 Filter shown with: <input
                                         value={newFilter}
