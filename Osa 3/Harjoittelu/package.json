@@ -1,0 +1,27 @@
+{
+  "name": "notebackend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "mode index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/OskarSulkava/palautusrepositorio.git"
+  },
+  "author": "Oskar Sulkava",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OskarSulkava/palautusrepositorio/issues"
+  },
+  "homepage": "https://github.com/OskarSulkava/palautusrepositorio#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
