@@ -1,8 +1,15 @@
 
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
 
 app.use(express.json()) //json-parseri, joka helpottaa data lähettämistä oikeassa muodossa
+
+morgan.token('content', (req, res) => JSON.stringify(req.body)) //Muutetaan objecti json stringiksi
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content'))
+
+
 
 let persons = [
     {
