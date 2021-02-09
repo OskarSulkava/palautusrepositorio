@@ -32,8 +32,6 @@ const App = () => {
             number: newNumber   
         }
         
-        
-
         if(person.some(p => p.name === newName)){
             
             let p = person.find(val => val.name === newName)
@@ -54,9 +52,9 @@ const App = () => {
                     }, 5000)
                 })
                 .catch(error => {
-
+                    let msg = error.response.data.error
                     setErrorMessage(
-                        `Information of ${p.name} has already been removed from server`
+                        msg
                     )
                     setTimeout(() => {
                         setErrorMessage(null)
@@ -70,28 +68,27 @@ const App = () => {
         else{
             personService
             .create(personObject)
-                .then(returnedPerson => { //Posti palauttaa tiedon siitä, mitä ollaan lähetetty ja itse response.data sisältää lähetetyt tiedot, ne palautetaan returnedPersonina ja luodaan uusi lista johon tämä lisätään
-                    setPersons(person.concat(returnedPerson))
+            .then(returnedPerson => { //Posti palauttaa tiedon siitä, mitä ollaan lähetetty ja itse response.data sisältää lähetetyt tiedot, ne palautetaan returnedPersonina ja luodaan uusi lista johon tämä lisätään
+                setPersons(person.concat(returnedPerson))
 
-                    setSuccessMessage(
-                        `Person ${returnedPerson.name} was succesfully added`
-                    )
-                    setTimeout(() => {
-                        setSuccessMessage(null)
-                    }, 5000)
-                })
-                .catch(error => {
-                    console.log(error.response.data.error)
-                    let msg = error.response.data.error // Asetetaan serveriltä tuleva error viesti
-                    if(personObject.name === '' || personObject.number === '') {
-                        setErrorMessage(
-                            msg
-                        )
-                        setTimeout(() => {
-                            setErrorMessage(null)
-                        }, 5000)
-                    }
-                })
+                setSuccessMessage(
+                    `Person ${returnedPerson.name} was succesfully added`
+                )
+                setTimeout(() => {
+                    setSuccessMessage(null)
+                }, 5000)
+            })
+            .catch(error => {
+                console.log(error.response.data)
+                console.log(error.response.data.error)
+                let msg = error.response.data.error // Asetetaan serveriltä tuleva error viesti
+                setErrorMessage(
+                    msg
+                )
+                setTimeout(() => {
+                    setErrorMessage(null)
+                }, 5000)
+            })
 
             setNewName('')
             setNewNumber('')
