@@ -60,7 +60,7 @@ const App = () => {
                         setErrorMessage(null)
                     }, 5000)
 
-                    setPersons(person.filter(person => person.id !== p.id))
+                    
                 })
             }
             
