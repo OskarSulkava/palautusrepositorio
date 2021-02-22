@@ -87,6 +87,55 @@ test('Cannot add a blog without author or url', async () => {
     .expect(400)
 })
 
+describe('Updating blogs', () => {
+  test('succeeds with status code 200 if ok', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    const blog = {
+      title: 'TestiBlogi', 
+      author: 'Testi Tero', 
+      url: 'https://randomtekstiäesittämässälinkkiä.com', 
+      likes: 88,
+    }
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .expect(200)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const blogToView = blogsAtEnd[0]
+    const processedBlog = JSON.parse(JSON.stringify(blogToView))
+    
+    expect(processedBlog).toContain(
+      {
+        title: 'TestiBlogi', 
+        author: 'Testi Tero', 
+        url: 'https://randomtekstiäesittämässälinkkiä.com', 
+        likes: 88,
+      }
+    )
+  })
+})
+
+describe('Deletion of a blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+
+    const titles = blogsAtEnd.map(r => r.title)
+    expect(titles).not.toContain(blogToDelete.title)
+  })
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })

@@ -1,0 +1,9 @@
+PUT http://localhost:3003/api/blogs/6033e4f6a6f8c85590c1bb53
+Content-Type: application/json	
+
+{	
+    "title": "Päivitettävä blogi",	
+    "author": "Testi",	
+    "url": "www.minuntaisteluni.fi",
+    "likes": 2	
+}
