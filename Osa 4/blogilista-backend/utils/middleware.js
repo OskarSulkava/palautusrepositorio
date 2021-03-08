@@ -1,5 +1,5 @@
-const { response } = require('express')
 const logger = require('./logger')
+const jwt = require('jsonwebtoken')
 
 const requestLogger = (request, response, next) => {
   logger.info('Method: ', request.method)
@@ -18,13 +18,36 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: error.message })
   } else if (error.name === 'CastError') {
     return response.status(400).send({ error: 'Malfomatted id' })
+  } else if (error.name === 'JsonWebTokenError') {
+    return response.status(401).json({
+      error: 'Invalid token'
+    })
   }
 
   next(error)
 }
 
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get('authorization')
+
+  if (authorization !== undefined) {
+    const authorization = request.get('authorization')
+    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+      const token = authorization.substring(7)
+
+      request.token = token
+    
+    } else {
+      return null
+    }
+  
+  }
+  next()
+}
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
-  errorHandler
+  errorHandler,
+  tokenExtractor
 }
